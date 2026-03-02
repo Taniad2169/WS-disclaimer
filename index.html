@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSwan — Agreement Creator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background: #14395d;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px 48px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 880px;
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 28px 70px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: #14395d;
+            padding: 30px 36px 24px;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(29,241,241,0.06);
+            pointer-events: none;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 5px;
+        }
+
+        .brand-icon {
+            width: 44px; height: 44px;
+            background: rgba(29,241,241,0.13);
+            border: 1.5px solid rgba(29,241,241,0.3);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .brand-icon i { color: #1DF1F1; font-size: 19px; }
+        .brand-name  { font-size: 26px; font-weight: 700; color: #1DF1F1; }
+        .header-sub  { color: rgba(255,255,255,0.5); font-size: 13px; padding-left: 57px; }
+
+        .step-badge {
+            position: absolute; top: 26px; right: 32px;
+            background: rgba(29,241,241,0.12);
+            border: 1px solid rgba(29,241,241,0.25);
+            color: #1DF1F1;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 5px 12px; border-radius: 20px;
+        }
+
+        .body { padding: 34px 36px 38px; }
+
+        .section-label {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .icon-dot {
+            width: 30px; height: 30px; border-radius: 9px;
+            background: rgba(20,57,93,0.08);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .icon-dot i { color: #14395d; font-size: 13px; }
+        .section-label h2 { font-size: 18px; font-weight: 700; color: #14395d; }
+
+        .textarea-wrap {
+            background: #f4f8fb;
+            border: 2px solid #c6daea;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .textarea-wrap:focus-within {
+            border-color: #14395d;
+            box-shadow: 0 0 0 3px rgba(20,57,93,0.07);
+        }
+
+        #agreement-text {
+            width: 100%;
+            min-height: 440px;
+            background: transparent;
+            border: none; outline: none;
+            font-size: 15px; line-height: 1.85;
+            color: #1a2b3c; resize: vertical;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #agreement-text::placeholder { color: #aac0d0; }
+
+        .word-bar {
+            display: flex; align-items: center; gap: 13px;
+            margin-bottom: 30px;
+        }
+
+        .word-track {
+            flex: 1; height: 5px;
+            background: #c6daea; border-radius: 5px; overflow: hidden;
+        }
+
+        .word-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, #0abfbf, #1DF1F1);
+            border-radius: 5px; transition: width 0.3s;
+        }
+
+        .word-fill.warn { background: linear-gradient(90deg, #e67e22, #e74c3c); }
+
+        .word-label { font-size: 13px; color: #6b8299; white-space: nowrap; }
+        .word-label b { color: #14395d; }
+        .word-label b.warn { color: #e74c3c; }
+
+        /* Warning box shown when text is too long for URL */
+        .url-warning {
+            display: none;
+            background: #fff3cd;
+            border: 2px solid #f0c040;
+            border-radius: 10px;
+            padding: 13px 16px;
+            font-size: 13px;
+            color: #7a5800;
+            margin-bottom: 20px;
+        }
+
+        .url-warning.show { display: block; }
+
+        .btn-row {
+            display: flex; gap: 14px;
+            justify-content: center; flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 14px 34px;
+            border: none; border-radius: 50px;
+            font-size: 16px; font-weight: 600;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: pointer; transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #1DF1F1, #0abfbf);
+            color: #14395d;
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(29,241,241,0.45);
+        }
+
+        .card-footer {
+            background: #f4f8fb;
+            border-top: 1px solid #c6daea;
+            padding: 14px 36px;
+            text-align: center;
+            font-size: 12px; color: #6b8299;
+        }
+
+        @media (max-width: 560px) {
+            .body { padding: 22px 18px 26px; }
+            header { padding: 24px 18px 18px; }
+            .step-badge { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <header>
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-feather-alt"></i></div>
+                <span class="brand-name">WebSwan</span>
+            </div>
+            <div class="header-sub">Agreement Creator — for your eyes only</div>
+            <div class="step-badge">Step 1 of 2</div>
+        </header>
+
+        <div class="body">
+            <div class="section-label">
+                <div class="icon-dot"><i class="fas fa-pen-fancy"></i></div>
+                <h2>Agreement Container</h2>
+            </div>
+
+            <div class="textarea-wrap">
+                <textarea id="agreement-text"
+                    placeholder="Type or paste your agreement terms here…&#10;&#10;When you click 'Send to Client', this text will be passed directly to your signature page on GitHub so your client can read it and sign."></textarea>
+            </div>
+
+            <div class="word-bar">
+                <div class="word-track">
+                    <div class="word-fill" id="word-fill"></div>
+                </div>
+                <div class="word-label"><b id="word-count">0</b> / 1500 words</div>
+            </div>
+
+            <div class="url-warning" id="url-warning">
+                ⚠️ Your agreement text is very long. If the link doesn't open correctly, try shortening the text slightly or split it into two agreements.
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-accent" id="btn-send">
+                    <i class="fas fa-paper-plane"></i> Send to Client for Signature
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-footer">&copy; 2024 The Web Swan — Agreement Creator (your private tool)</div>
+    </div>
+
+    <script>
+        const textarea  = document.getElementById('agreement-text');
+        const wordEl    = document.getElementById('word-count');
+        const fillEl    = document.getElementById('word-fill');
+        const warning   = document.getElementById('url-warning');
+        const MAX_WORDS = 1500;
+        const STORAGE   = 'webswan_creator_v1';
+
+        // ── YOUR GITHUB SIGNATURE PAGE URL ──────────────────
+        // Update this if you ever change your GitHub repo name
+        const SIGNATURE_PAGE = 'https://taniad2169.github.io/Webswan-Signature-Scope-of-Work/';
+
+        function countWords(t) {
+            return (t && t.trim()) ? t.trim().split(/\s+/).length : 0;
+        }
+
+        function updateCount() {
+            let n = countWords(textarea.value);
+            if (n > MAX_WORDS) {
+                textarea.value = textarea.value.trim().split(/\s+/).slice(0, MAX_WORDS).join(' ');
+                n = MAX_WORDS;
+            }
+            wordEl.textContent = n;
+            fillEl.style.width = Math.min((n / MAX_WORDS) * 100, 100) + '%';
+            fillEl.classList.toggle('warn', n >= MAX_WORDS);
+            wordEl.classList.toggle('warn', n >= MAX_WORDS);
+            try { localStorage.setItem(STORAGE, textarea.value); } catch(e) {}
+        }
+
+        textarea.addEventListener('input', updateCount);
+
+        // Restore saved
+        try {
+            const sv = localStorage.getItem(STORAGE);
+            if (sv) { textarea.value = sv; updateCount(); }
+        } catch(e) {}
+
+        // ── SEND TO CLIENT ───────────────────────────────────
+        document.getElementById('btn-send').addEventListener('click', () => {
+            const text = textarea.value.trim();
+            if (!text) {
+                alert('Please enter your agreement text before sending.');
+                return;
+            }
+
+            // Encode the agreement text as a URL parameter
+            const encoded = encodeURIComponent(text);
+            const url = SIGNATURE_PAGE + '?agreement=' + encoded;
+
+            // Warn if URL is very long (browsers handle up to ~2000 chars fine, most up to 8000+)
+            warning.classList.toggle('show', url.length > 6000);
+
+            // Open the signature page with the agreement text in the URL
+            window.open(url, '_blank');
+        });
+    </script>
+</body>
+</html>
